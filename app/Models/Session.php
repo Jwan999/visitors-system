@@ -16,4 +16,19 @@ class Session extends Model
 
         return $this->hasMany(Participant::class);
     }
+
+    public static function StoreRules()
+    {
+        $rules = array(
+            'title' => ["required", 'bail'],
+            'date' => ['required', 'date', 'bail'],
+        );
+        return $rules;
+    }
+
+
+    public static  $messages = array(
+        'title.required' => 'الاسم مطلوب',
+        'date.required' => 'تاريخ السشن مطلوب',
+    );
 }
