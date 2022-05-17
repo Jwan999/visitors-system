@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -17,14 +18,15 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email');
             $table->string('phone');
-            $table->string('gender');
+            $table->enum('gender', ['male', 'female']);
             $table->string('governorate');
-            $table->string('age');
-
+            $table->string('date_of_birth');
+            $table->string('nationality');
+            $table->string('field_of_study')->nullable();
+            $table->enum('educational_background', ['primary', 'secondary', 'universityEnrolled', 'bachelor', 'master', 'phD'])->nullable();
+            $table->string('university')->nullable();
             $table->boolean('attendance')->default(false);
             $table->foreignId('session_id')->constrained('sessions')->onUpdate('cascade')->onDelete('cascade');
-
-
             $table->timestamps();
         });
     }
