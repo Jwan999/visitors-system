@@ -20,14 +20,15 @@ class SessionController extends Controller
         if (!$request->expectsJson()) {
             return view('dashboard.sections.sessions');
         }
-        $sessions = Session::with("participants")->select('*')->where(function ($q) use ($request) {
+        $sessions = Session::select('*')->where(function ($q) use ($request) {
             if ($request->has('day'))
                 $q->whereDay('date', $request->day);
             if ($request->has('title'))
                 $q->where('title', 'like',  "%$request->name%");
         });
         $count = $sessions->count();
-        $withPaging = $sessions->offset($request->skip)
+        $withPaging = $sessions->withCount("participants")
+            ->offset($request->skip)
             ->limit($request->take)
             ->get();
         return [
@@ -65,9 +66,9 @@ class SessionController extends Controller
         );
         $session = tap(new Session($data))->save();
 
-
         if ($request->file != null) {
             $data = $request->validate([
+                'file' => 'required',
                 'file.*' => 'mimes:xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
             $_REQUEST['session_id'] = $session->id;
@@ -122,6 +123,6 @@ class SessionController extends Controller
     public function destroy($id)
     {
         Session::destroy($id);
-        return response('تم حذف الورشة بنجاح', 200);
+        return response('تم حذف الورشة بنجاح', 203);
     }
 }
