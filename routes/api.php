@@ -27,7 +27,10 @@ Route::post('/participants', [ParticipantController::class, 'match']); //record 
 Route::prefix('dashboard')->group(function () {
     Route::get('/sessions', [SessionController::class, 'index']);
     Route::post('/sessions', [SessionController::class, 'store']);
+    Route::delete('/sessions/{id}', [SessionController::class, 'destroy']);
     Route::post('/sessions/import', [SessionController::class, 'import']);
+
     Route::get('/participants', [ParticipantController::class, 'index']);
     Route::post('/participants', [ParticipantController::class, 'store']);
+    Route::delete('/participants/{id}', [ParticipantController::class, 'destroy']);
 });
