@@ -138,8 +138,8 @@ class ParticipantController extends Controller
      * @param  \App\Models\Participant  $participant
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Participant $participant)
+    public function destroy($id)
     {
-        //
+        Participant::destroy($id);
     }
 }
