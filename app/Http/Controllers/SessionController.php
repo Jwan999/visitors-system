@@ -80,14 +80,18 @@ class SessionController extends Controller
 
     public function import(Request $request)
     {
-        $data = $request->validate([
-            'file' => ["required"],
-            'file.*' => 'mimes:xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            "session_id" => ["required"],
-        ]);
-        Excel::import(new ParticipantsImport, $data['file']);
+        try {
+            $data = $request->validate([
+                'file' => ["required"],
+                'file.*' => 'mimes:xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                "session_id" => ["required"],
+            ]);
+            Excel::import(new ParticipantsImport, $data['file']);
 
-        return response('تم رفع المشاركين بنجاح');
+            return response('تم رفع المشاركين بنجاح');
+        } catch (\Throwable $th) {
+            return response('حدث خطا اثناء رفع المشاركين', 500);
+        }
     }
 
     /**
