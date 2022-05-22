@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Participant;
+use App\Models\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
@@ -19,22 +20,25 @@ class ParticipantController extends Controller
         if (!$request->expectsJson()) {
             return view('dashboard.sections.participants');
         }
-        $sessions = Participant::select('*')->where(function ($q) use ($request) {
+        $session = [];
+        $participants = Participant::select('*')->where(function ($q) use ($request) {
             if ($request->has('session_id'))
                 $q->where('session_id', '=',  $request->session_id);
+
             if ($request->has('p_name'))
                 $q->where('name', 'like',  "%$request->p_name%");
             if ($request->has('phone'))
                 $q->where('phone', '=',  $request->phone);
         });
-        $count = $sessions->count();
-        $withPaging = $sessions->offset($request->skip)
+        if ($request->has('session_id')) {
+            $session = Session::find($request->session_id);
+        }
+
+        $withPaging = $participants->offset($request->skip)
             ->limit($request->take)
             ->get();
-        return [
-            "count" => $count,
-            "results" => $withPaging,
-        ];
+        $session['participants'] = $withPaging;
+        return $session;
     }
     public function getForm()
     {
@@ -52,7 +56,7 @@ class ParticipantController extends Controller
     {
         $data = $request->validate([
             'info' => ['required'],
-            'type' => ['required', Rule::in(['phone', 'email'])], //email or phone
+            'type' => ['required', Rule::in(['phone', 'email', 'id'])], //email or phone
             'session_id' => ['required'],
         ]);
         $participant = Participant::select('*')->where(function ($q) use ($data) {
@@ -61,6 +65,8 @@ class ParticipantController extends Controller
                 $q->where('phone', '=', $data['info']);
             else if ($data['type'] === 'email')
                 $q->where('email', '=', $data['info']);
+            else if ($data['type'] === 'id')
+                $q->where('id', '=', $data['info']);
         })->get()->first;
 
         if ($participant !== null) {
