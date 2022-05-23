@@ -29,7 +29,7 @@ class SessionController extends Controller
         $count = $sessions->count();
         $withPaging = $sessions->withCount("participants")
             ->offset($request->skip)
-            ->limit($request->take)
+            ->limit($request->take)->orderBy('date', 'ASC')
             ->get();
         return [
             "count" => $count,
