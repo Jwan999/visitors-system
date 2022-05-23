@@ -35,7 +35,7 @@ class ParticipantController extends Controller
         }
 
         $withPaging = $participants->offset($request->skip)
-            ->limit($request->take)
+            ->limit($request->take)->orderBy('name', 'ASC')
             ->get();
         $session['participants'] = $withPaging;
         return $session;
@@ -62,18 +62,17 @@ class ParticipantController extends Controller
         $participant = Participant::select('*')->where(function ($q) use ($data) {
             $q->where('session_id', '=',  $data['session_id']);
             if ($data['type'] === 'phone')
-                $q->where('phone', '=', $data['info']);
+                $q->where('phone', 'like', "%" . $data['info']);
             else if ($data['type'] === 'email')
                 $q->where('email', '=', $data['info']);
             else if ($data['type'] === 'id')
                 $q->where('id', '=', $data['info']);
-        })->get()->first;
-
+        })->get()->first();
         if ($participant !== null) {
             $participant->update(array('attendance' => true));
-            response('تم تسجيل حضورك', 200);
+            return  response('تم تسجيل حضورك', 200);
         } else {
-            response('معلوماتك غير متوفره بالورشة', 404);
+            return  response('معلوماتك غير متوفره بالورشة', 404);
         }
     }
 
