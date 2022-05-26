@@ -35,4 +35,5 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/participants', [ParticipantController::class, 'index']);
     Route::post('/participants', [ParticipantController::class, 'store']);
     Route::delete('/participants/{id}', [ParticipantController::class, 'destroy']);
+    Route::get('participants/export', [ParticipantController::class, 'export']);
 });

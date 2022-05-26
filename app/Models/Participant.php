@@ -49,4 +49,15 @@ class Participant extends Model
         'nationality.required' => 'القومية مطلوبة',
         'session_id.required' => 'session_id is required',
     );
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'session_id',
+    ];
 }

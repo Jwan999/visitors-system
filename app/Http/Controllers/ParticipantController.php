@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ParticipantsExport;
 use App\Models\Participant;
 use App\Models\Session;
 use Illuminate\Http\Request;
@@ -85,6 +86,11 @@ class ParticipantController extends Controller
         } else {
             return  response('معلوماتك غير متوفره بالورشة', 404);
         }
+    }
+
+    public function export(Request $request)
+    {
+        return (new ParticipantsExport($request))->download('participants.xlsx');
     }
 
     /**
