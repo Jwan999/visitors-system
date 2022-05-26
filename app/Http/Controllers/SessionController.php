@@ -9,14 +9,43 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class SessionController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('dashboard.sections.sessions');
+
+        if (!$request->expectsJson()) {
+            return view('dashboard.sections.sessions');
+        }
+        $sessions = Session::select('*')->where(function ($q) use ($request) {
+            if ($request->has('day'))
+                $q->whereDay('date', $request->day);
+            if ($request->has('title'))
+                $q->where('title', 'like',  "%$request->name%");
+        });
+        $count = $sessions->count();
+        $withPaging = $sessions->withCount("participants")
+            ->offset($request->skip)
+            ->limit($request->take)->orderBy('date', 'ASC')
+            ->get();
+        return [
+            "count" => $count,
+            "results" => $withPaging,
+        ];
     }
 
     public function createForm()
@@ -29,7 +58,7 @@ class SessionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
     }
@@ -42,26 +71,38 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
+        $data = $request->validate(
+            Session::StoreRules(),
+            Session::$messages
+        );
+        $session = tap(new Session($data))->save();
 
-//        dd($request);
-        $rules = $request->validate([
-            "title" => "required",
-            "date" => "required",
-        ]);
+        if ($request->file != null) {
+            $data = $request->validate([
+                'file' => 'required',
+                'file.*' => 'mimes:xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+            $_REQUEST['session_id'] = $session->id;
+            Excel::import(new ParticipantsImport, $data['file']);
+        }
 
-        $data = [
-            'title' => $request->title,
-            'date' => $request->date,
+        return response($session, 200);
+    }
 
-        ];
+    public function import(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'file' => ["required"],
+                'file.*' => 'mimes:xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                "session_id" => ["required"],
+            ]);
+            Excel::import(new ParticipantsImport, $data['file']);
 
-        Session::create($data);
-
-        return redirect('/dashboard/sessions',)->withSuccess('Session Created');
-
-
-//        dd($request->file);
-//        Excel::import(new ParticipantsImport, 'participants.xlsx');
+            return response('تم رفع المشاركين بنجاح');
+        } catch (\Throwable $th) {
+            return response('حدث خطا اثناء رفع المشاركين', 500);
+        }
     }
 
     /**
@@ -75,16 +116,6 @@ class SessionController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Session $session
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Session $session)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -104,8 +135,9 @@ class SessionController extends Controller
      * @param \App\Models\Session $session
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Session $session)
+    public function destroy($id)
     {
-        //
+        Session::destroy($id);
+        return response('تم حذف الورشة بنجاح', 203);
     }
 }
