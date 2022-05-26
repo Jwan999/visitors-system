@@ -10,6 +10,17 @@ use Illuminate\Validation\Rule;
 
 class ParticipantController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')
+            ->only(['index', 'store', 'update', 'destroy']);
+    }
     /**
      * Display a listing of the resource.
      *
