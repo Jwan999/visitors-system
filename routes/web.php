@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Redirect;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,9 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/', [ParticipantController::class, 'getForm']);
+Route::get('/', function () {
+    Redirect('/web');
+});
 Route::post('/participants', [ParticipantController::class, 'match']);
 
 
@@ -26,7 +29,7 @@ Route::prefix('dashboard')->group(function () {
     Route::post('/sessions', [SessionController::class, 'store']);
 
     Route::get('/participants', [ParticipantController::class, 'index']);
-//    Route::get('/participants', [ParticipantController::class, 'store']);
+    //    Route::get('/participants', [ParticipantController::class, 'store']);
 
     Route::get('/', [DashboardController::class, 'index']);
 });

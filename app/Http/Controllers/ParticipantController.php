@@ -6,7 +6,6 @@ use App\Exports\ParticipantsExport;
 use App\Models\Participant;
 use App\Models\Session;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 class ParticipantController extends Controller
@@ -82,10 +81,26 @@ class ParticipantController extends Controller
         })->get()->first();
         if ($participant !== null) {
             $participant->update(array('attendance' => true));
-            return  response('تم تسجيل حضورك', 200);
+            return  response('Attendance recorded', 200);
         } else {
-            return  response('معلوماتك غير متوفره بالورشة', 404);
+            return  response('Your information are not available in this session', 404);
         }
+    }
+
+
+    /// To cancel the attendance of the student
+    public function unMatch(Request $request)
+    {
+        $data = $request->validate([
+            'id' => ['required'],
+            'session_id' => ['required'],
+        ]);
+        $participant = Participant::select('*')->where(function ($q) use ($data) {
+            $q->where('session_id', '=',  $data['session_id']);
+            $q->where('id', '=', $data['id']);
+        })->get()->first();
+        $participant->update(array('attendance' => false));
+        return  response('Attendance Removed', 200);
     }
 
     public function export(Request $request)

@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::post('/participants', [ParticipantController::class, 'match']); //record attendance
+Route::post('/participants/match', [ParticipantController::class, 'match']); //record attendance
 Route::prefix('dashboard')->group(function () {
     Route::get('/sessions', [SessionController::class, 'index']);
     Route::post('/sessions', [SessionController::class, 'store']);
@@ -33,6 +33,7 @@ Route::prefix('dashboard')->group(function () {
     Route::post('/sessions/import', [SessionController::class, 'import']);
 
     Route::get('/participants', [ParticipantController::class, 'index']);
+    Route::post('/participants/un_match', [ParticipantController::class, 'unMatch']); //remove attendance
     Route::post('/participants', [ParticipantController::class, 'store']);
     Route::delete('/participants/{id}', [ParticipantController::class, 'destroy']);
     Route::get('participants/export', [ParticipantController::class, 'export']);
