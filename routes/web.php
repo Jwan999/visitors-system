@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Redirect;
 */
 
 Route::get('/', function () {
-    Redirect('/web');
+    return redirect('/web/index.html');
 });
 Route::post('/participants', [ParticipantController::class, 'match']);
 
