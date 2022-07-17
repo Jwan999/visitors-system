@@ -27,7 +27,7 @@ class ParticipantsExport implements FromQuery, WithHeadings, WithMapping
 
     public function headings(): array
     {
-        return ['#', "Name", "Email", "Phone", "Gender", "Governance", "Date of birth", "Nationality", "Field of Study", "University", 'Educational Background', "Attended",];
+        return ["Name", "Email", "Phone", "Gender", "Governance", "Date of birth", "Nationality", "Field of Study", "University", 'Educational Background', "Attended",];
     }
 
     /**
@@ -36,7 +36,6 @@ class ParticipantsExport implements FromQuery, WithHeadings, WithMapping
     public function map($participant): array
     {
         return [
-            $participant->id,
             $participant->name,
             $participant->email,
             $participant->phone,
