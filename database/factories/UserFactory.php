@@ -20,9 +20,9 @@ class UserFactory extends Factory
     {
         return [
             'name' => 'IOT ADMIN',
-            'email' => 'iotAdmin@email.com',
+            'email' => env('ADMIN_EMAIL'),
             'email_verified_at' => now(),
-            'password' => Hash::make('IOTMAKERATTEND12345'), // password
+            'password' => Hash::make(env('ADMIN_PASSWORD')), // password
             'remember_token' => Str::random(10),
         ];
     }
