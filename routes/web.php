@@ -20,16 +20,16 @@ use Illuminate\Support\Facades\Redirect;
 Route::get('/', function () {
     return redirect('/web/index.html');
 });
-Route::post('/participants', [ParticipantController::class, 'match']);
+// Route::post('/participants', [ParticipantController::class, 'match']);
 
 
-Route::prefix('dashboard')->group(function () {
-    Route::get('/sessions', [SessionController::class, 'index']);
-    Route::get('/sessions/create', [SessionController::class, 'createForm']);
-    Route::post('/sessions', [SessionController::class, 'store']);
+// Route::prefix('dashboard')->group(function () {
+//     Route::get('/sessions', [SessionController::class, 'index']);
+//     Route::get('/sessions/create', [SessionController::class, 'createForm']);
+//     Route::post('/sessions', [SessionController::class, 'store']);
 
-    Route::get('/participants', [ParticipantController::class, 'index']);
-    //    Route::get('/participants', [ParticipantController::class, 'store']);
+//     Route::get('/participants', [ParticipantController::class, 'index']);
+//     //    Route::get('/participants', [ParticipantController::class, 'store']);
 
-    Route::get('/', [DashboardController::class, 'index']);
-});
+//     Route::get('/', [DashboardController::class, 'index']);
+// });
